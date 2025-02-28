@@ -1,0 +1,10 @@
+.publiclayout {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.publicmain {
+    background-color: blue;
+    height: 100vh;
+}
