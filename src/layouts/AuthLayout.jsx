@@ -1,9 +1,12 @@
 import React from 'react'
-import { Outlet } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 
 const AuthLayout = ({children}) => {
   return (
-    <div>AuthLayout
+    <div className='auth-layout'>
+      <Link to='/'>
+        <ion-icon name="home" size="large"></ion-icon>
+      </Link>
       {children}
       <Outlet/>
     </div>

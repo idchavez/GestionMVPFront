@@ -1,8 +1,11 @@
 import React from 'react'
+import Empleados from './Empleados';
 
 const Admin = () => {
   return (
-    <div>Index del panel de Admin</div>
+    <div>Index del panel de Admin
+      <Empleados/>
+    </div>
   )
 };
 
