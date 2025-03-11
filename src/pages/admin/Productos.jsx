@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -52,9 +52,9 @@ const Productos = () => {
         <TablaProductos listaProductos={productos}/>
       ) : (
         <FormularioCreacionProductos
-          propMostrarTabla={setMostrarTabla}
+          setMostrarTabla={setMostrarTabla}
           listaProductos={productos}
-          propAgregarProducto={setProductos}/>
+          setProductos={setProductos}/>
       )}
       <ToastContainer position='bottom-center' autoClose={5000} />
     </div>
@@ -100,69 +100,53 @@ const TablaProductos = ({listaProductos}) => {
   </div>;
 };
 
-const FormularioCreacionProductos = ({propMostrarTabla, listaProductos, propAgregarProducto}) => {
-  const [nombreProducto, setNombreProducto] = useState("");
-  const [stock, setStock] = useState("");
-  const [precio, setPrecio] = useState("");
-  const [descripcion, setDescripcion] = useState("");
-  const [estado, setEstado] = useState("");
-  const [proveedor, setProveedor] = useState("");
+const FormularioCreacionProductos = ({
+  setMostrarTabla,
+  listaProductos,
+  setProductos}) => {
+  const form = useRef(null);
 
-  const enviarABackend = () => {
-    console.log('producto', nombreProducto, 'stock', stock);
-    toast.success("Producto creado!");
-    propMostrarTabla(true);
-    propAgregarProducto([...listaProductos,
-      {producto:nombreProducto,
-        stock:stock,
-        precio:precio,
+  const submitForm = (e) => {
+    //evita evento por defecto de redirigir al hacer submit
+    e.preventDefault();
+    const fd = new FormData(form.current);
 
-      }
-    ]);
+    //Para cada variable del formulario
+    const nuevoProducto = {};
+    fd.forEach((value, key) => {
+      nuevoProducto[key] = value;
+    });
+    
+    setMostrarTabla(true);
+    toast.success("Producto creado con exito!");
+    setProductos([...listaProductos, nuevoProducto]);
   };
-
-  
 
   return (
     <div>
       <h2>Crear Nuevo Producto</h2>
-      <form>
-        <label htmlFor='nombreProducto'>
+      <form ref={form} onSubmit={submitForm}>
+        <label htmlFor='producto'>
           Nombre del Producto
-          <input name='nombreProducto' type='text' value={nombreProducto}
-          onChange={(e) => {
-            setNombreProducto(e.target.value);
-          }} required/>
+          <input name='producto' type='text' required/>
         </label>
         <label htmlFor='stock'>
           Stock
-          <input name='stock' type='number' min={1} max={100} value={stock}
-          onChange={(e) => {
-            setStock(e.target.value);
-          }} required/>
+          <input name='stock' type='number'
+          min={1} max={100} required/>
         </label>
         <label htmlFor='precio'>
           Precio
-          <input name='precio' type='text' value={precio}
-          onChange={(e) => {
-            setPrecio(e.target.value);
-          }} required/>
+          <input name='precio' type='text' required/>
         </label>
         <label htmlFor='descripcion'>
           Descripcion
-          <input name='descripcion' type='text' value={descripcion}
-          onChange={(e) => {
-            setDescripcion(e.target.value);
-          }} required/>
+          <input name='descripcion' type='text' required/>
         </label>
         <label htmlFor='estado'>
           Estado
-          <select name='estado'
-            value={estado}
-            onChange={(e) => {
-              setEstado(e.target.value);
-            }} required>
-            <option disabled>Seleccione una opcion</option>
+          <select name='estado' required defaultValue={0}>
+            <option disabled value={0}>Seleccione una opcion</option>
             <option>En stock</option>
             <option>Agotado</option>
             <option>Baja disponibilidad</option>
@@ -170,14 +154,9 @@ const FormularioCreacionProductos = ({propMostrarTabla, listaProductos, propAgre
         </label>
         <label htmlFor='proveedor'>
           Proveedor
-          <input name='proveedor' type='text' value={proveedor}
-          onChange={(e) => {
-            setProveedor(e.target.value);
-          }} required/>
+          <input name='proveedor' type='text' required/>
         </label>
-        <button type='submit' onClick={() => {
-          enviarABackend();
-        }}>Guardar Producto</button>
+        <button type='submit'>Guardar Producto</button>
       </form>
     </div>
   )

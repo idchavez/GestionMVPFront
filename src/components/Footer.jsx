@@ -2,7 +2,9 @@ import React from 'react'
 
 const Footer = () => {
   return (
-    <div>Footer</div>
+    <div className='landing-foot'>
+      <span className='neon-layout'>© I&D 2025 | Todos los derechos reservados.</span>
+    </div>
   )
 };
 

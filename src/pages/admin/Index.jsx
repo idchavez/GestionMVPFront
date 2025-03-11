@@ -1,10 +1,13 @@
 import React from 'react'
-import Empleados from './Empleados';
+import { useDarkMode } from 'context/darkMode';
 
 const Admin = () => {
+
+  const {darkMode} = useDarkMode();
+
   return (
-    <div>Index del panel de Admin
-      <Empleados/>
+    <div className={`${darkMode ? 'dark-mode' : '' }`}>Index del panel de Admin
+      
     </div>
   )
 };

@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 
 const Registro = () => {
   return (
-    <div>
+    <div className='login'>
       <h2>Crea tu cuenta</h2>
             <form>
-              <div>
+              <div className='inputs-registro'>
                 <label htmlFor=''>
                   Nombre
                   <input type='text' name=''/>
@@ -32,14 +32,15 @@ const Registro = () => {
                   <input type='password' required/>
                 </label>
               </div>
-              <div>
+              <div className='login-access'>
+                <br/>
                 <Link to='/admin'>
-                <button type='submit'>Registrarse</button>
+                  <button className='btn-submit' type='submit'>Registrarse</button>
                 </Link>
-              </div>
-              <div>
+                <br/>
                 ¿Ya tienes cuenta?
-                <Link to='/login'>Inicia Sesion</Link>
+                <br/><br/>
+                <Link to='/login' className='links'> Inicia Sesion</Link>
               </div>
             </form>
     </div>

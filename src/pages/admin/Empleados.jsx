@@ -4,8 +4,8 @@ const Empleados = () => {
   return (
     <div>
       <table>
+      <caption>Administracion de Empleados</caption>
         <thead>
-          <caption>Administracion de Empleados</caption>
           <tr>
             <th>Nombres</th>
             <th>Apellidos</th>

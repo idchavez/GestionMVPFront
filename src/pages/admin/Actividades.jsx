@@ -4,8 +4,8 @@ const Actividades = () => {
   return (
     <div>
       <table>
+      <caption>Administracion de Actividades</caption>
         <thead>
-          <caption>Administracion de Actividades</caption>
           <tr>
             <th>Nombre</th>
             <th>Descripcion</th>
