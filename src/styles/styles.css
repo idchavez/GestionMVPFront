@@ -1,10 +1,223 @@
-.publiclayout {
+.public-layout {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    background-color: rgb(0, 0, 0);
+    color: #fff;
+    box-shadow: 10px 10px 10px #fff;
+}
+/*--------------Landing------------------*/
+.landing-nav {
+    font: 2em sans-serif;
+    font-weight: 900;
+    text-align: center;
+    text-decoration: none;
 }
 
-.publicmain {
-    background-color: blue;
+@keyframes neon {
+    0% {
+        text-shadow: 
+        0 0 10px #0ff,
+        0 0 50px #0ff;
+    }
+    25% {
+        text-shadow: 
+        0 0 60px #0ff,
+        0 0 70px #0ff;
+    }
+    50% {
+        text-shadow: 
+        0 0 10px #0ff,
+        0 0 100px #0ff;
+    }
+    
+}
+
+.neon-layout {
+    text-shadow: 
+        0 0 5px #0ff,
+        0 0 80px #0ff;
+        animation-timing-function: ease-in-out;
+        animation: neon 3s infinite alternate;
+}
+
+.public-main {
+    background-image: url('media/background.jpg');
+    background-size: cover;
     height: 100vh;
+}
+
+.landing-foot {
+    text-align: center;
+    margin: 20px;
+}
+
+.landing-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 200px);
+}
+
+.btn-login-landing {
+    background-color: rgb(56, 53, 53);
+    border: transparent;
+    border-radius: 80%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    padding: 15px;
+}
+
+.btn-login-landing:hover {
+    background-color: #030303;
+    transform: scale(1.2);
+}
+
+.link-login {
+    color: #ffffff;
+    font-weight: bold;
+    text-decoration: none;
+}
+/*--------PrivateLayout---------*/
+
+.admin-layout {
+    background: radial-gradient(ellipse, rgba(3,255,227,1) 0%, rgb(5, 21, 243) 70%);
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+    border: 2px solid rgb(207, 204, 204);
+    background-color: rgba(207, 204, 204, 0.5);
+}
+
+.private-main {
+    width: 100vw;
+    overflow-y: scroll;
+}
+
+.rutas-admin button {
+    background-color: rgba(207, 204, 204, 0.5);
+    border: transparent;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    margin-left: 25%;
+    margin-bottom: 20px;
+    padding: 8px;
+}
+
+.rutas-admin a {
+    text-decoration: none;
+}
+
+.fa {
+    color: #000;
+    padding-right: 10px;
+}
+
+.rutas-admin button:hover {
+    background-color: rgba(17, 0, 255);
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.logo-private {
+    color: #fff;
+    display: flex;
+    align-content: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    font: 2em sans-serif;
+    font-weight: 900;
+    text-align: center;
+    text-decoration: none;
+}
+
+/*----------Login-----------*/
+
+.auth-layout {
+    color: #fff;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse, rgba(3,255,227,1) 0%, rgb(5, 21, 243) 70%);
+}
+
+.login {
+    width: 35%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    border-radius: 25px;
+    border: 2px solid rgb(207, 204, 204);
+    background-color: rgba(207, 204, 204, 0.5);
+    padding: 50px;
+} 
+
+input {
+    outline: transparent ;
+    border: transparent;
+    border-radius: 5px;
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.8);
+    padding: 5px;
+    margin: 10px;
+}
+
+input:hover {
+    transform: scale(1.04);
+}
+
+.inputs-login {
+    display: flex;
+}
+
+.login-access {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+    text-align: center;
+}
+
+.links {
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+}
+
+.links:hover {
+    color: #525050;
+    transform: scale(1.04);
+}
+
+.inputs-registro {
+    display: grid;
+    grid-template-rows: 70px 70px;
+    grid-template-columns: 200px 200px;
+}
+
+.btn-submit {
+    background: linear-gradient( rgba(3,255,227,1) 0%, rgb(5, 21, 243) 80%);
+    border: transparent;
+    border-radius: 15px;
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.8);
+    color: #fff;
+    font-weight: bold;
+    padding: 8px;
+}
+
+.btn-submit:hover {
+    background: linear-gradient( rgb(5, 21, 243,1) 0%, rgba(3,255,227) 90%);
+    transform: scale(1.04);
+}
+
+/*---------DarkMode---------*/
+.dark-mode {
+    height: 100vh;
+    background-color: #1d2125;
 }

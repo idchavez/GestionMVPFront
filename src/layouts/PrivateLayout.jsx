@@ -4,10 +4,12 @@ import { Outlet } from 'react-router-dom';
 
 const PrivateLayout = ({children}) => {
   return (
-    <div>
+    <div className='admin-layout'>
       <Sidebar/>
+      <main className='private-main'>
       {children}
       <Outlet/>
+      </main>
     </div>
   )
 };

@@ -10,29 +10,40 @@ import AuthLayout from "layouts/AuthLayout";
 import Empleados from 'pages/admin/Empleados';
 import Actividades from "pages/admin/Actividades";
 import Productos from "pages/admin/Productos";
+import { DarkModeContext } from "context/darkMode";
+import { useEffect, useState } from "react";
 
 function App() {
+
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    console.log('modo dark:', darkMode)
+  }, [darkMode]);
+
   return (
     <div>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<AuthLayout/>}>
-            <Route path="/login" element={<Login/>}/>
-            <Route path="/registro" element={<Registro/>}/>
-          </Route>
+      <DarkModeContext.Provider value={{darkMode, setDarkMode}}>
+        <BrowserRouter>
+          <Routes>
+            <Route element={<AuthLayout/>}>
+              <Route path="/login" element={<Login/>}/>
+              <Route path="/registro" element={<Registro/>}/>
+            </Route>
 
-          <Route element={<PrivateLayout/>}>
-            <Route path="/admin/empleados" element={<Empleados/>}/>
-            <Route path="/admin/actividades" element={<Actividades/>}/>
-            <Route path="/admin/productos" element={<Productos/>}/>
-            <Route path="/admin" element={<Admin/>}/>
-          </Route>on
-          
-          <Route element={<PublicLayout/>}>
-            <Route path="/" element={<Index/>}/>
-          </Route>
-        </Routes>
-      </BrowserRouter>
+            <Route element={<PrivateLayout/>}>
+              <Route path="/admin/empleados" element={<Empleados/>}/>
+              <Route path="/admin/actividades" element={<Actividades/>}/>
+              <Route path="/admin/productos" element={<Productos/>}/>
+              <Route path="/admin" element={<Admin/>}/>
+            </Route>on
+            
+            <Route element={<PublicLayout/>}>
+              <Route path="/" element={<Index/>}/>
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </DarkModeContext.Provider>
     </div>
   );
 }

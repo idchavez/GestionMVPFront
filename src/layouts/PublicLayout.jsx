@@ -5,9 +5,9 @@ import { Outlet } from 'react-router-dom';
 
 const PublicLayout = () => {
   return (
-    <div className='publiclayout'>
+    <div className='public-layout'>
       <Navbar/>
-      <main className='publicmain'><Outlet/></main>
+      <main className='public-main'><Outlet/></main>
       <Footer/>
     </div>
   )

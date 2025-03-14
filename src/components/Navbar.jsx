@@ -2,7 +2,11 @@ import React from 'react'
 
 const Navbar = () => {
   return (
-    <div>Navbar</div>
+    <nav>
+      <h1 className='landing-nav neon-layout'>
+        Gestion MVP
+      </h1>
+    </nav>
   )
 };
 
