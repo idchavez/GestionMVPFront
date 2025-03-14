@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 
 const PrivateLayout = ({children}) => {
   return (
-    <div className='sidebar-admin'>
+    <div className='admin-layout'>
       <Sidebar/>
       <main className='private-main'>
       {children}
