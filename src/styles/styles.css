@@ -86,6 +86,11 @@
 }
 
 .sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    width: 250px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
     border-radius: 5px;
     border: 2px solid rgb(207, 204, 204);
@@ -93,25 +98,42 @@
 }
 
 .private-main {
-    width: 100vw;
-    overflow-y: scroll;
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+    width: calc(100vw - 250px);
 }
 
-.rutas-admin button {
-    background-color: rgba(207, 204, 204, 0.5);
+.rutas-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+.ruta-link {
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+} 
+
+.ruta-btn-active, .ruta-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    padding: 8px;
     border: transparent;
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    margin-left: 25%;
-    margin-bottom: 20px;
-    padding: 8px;
+    background-color: rgba(7, 30, 245);
+    color: #ffffff;
+    font-size: 1em;
+    cursor: pointer;
 }
 
-.rutas-admin a {
-    text-decoration: none;
+.ruta-btn {
+    background-color: rgba(204, 205, 207, 0.5);
 }
 
 .fa {
@@ -119,22 +141,140 @@
     padding-right: 10px;
 }
 
-.rutas-admin button:hover {
-    background-color: rgba(17, 0, 255);
-    color: #fff;
+.ruta-btn:hover, .ruta-btn-active:hover {
+    background-color: rgb(18, 6, 177);
     transform: scale(1.1);
 }
 
 .logo-private {
     color: #fff;
-    display: flex;
-    align-content: center;
-    margin-top: 50px;
-    margin-bottom: 50px;
-    font: 2em sans-serif;
+    font-size: 2em;
     font-weight: 900;
     text-align: center;
     text-decoration: none;
+    margin: 50px 0;
+}
+
+.btn-close-sesion {
+    margin-top: auto;
+    padding: 8px;
+    width: 100%;
+    border: transparent;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: rgb(17, 0, 255);
+}
+
+.btn-close-sesion:hover {
+    transform: scale(1.04);
+}
+/*----------Main-Private-Tables-----------*/
+
+.table-generic {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    background-color: #fff;
+    border-spacing: 0;
+    width: auto;
+}
+
+.table-generic th {
+    background-color: #000;
+    color: #fff;
+}
+
+.table-generic th, td {
+    padding: 10px;
+}
+
+.table-generic tr:nth-child(even) {
+    background-color: #ddd;
+}
+
+.table-generic tr:hover {
+    background-color: #ddd;
+    cursor: pointer;
+}
+
+.acciones {
+    display: flex;
+    justify-content: space-around;
+}
+
+.fa-check:hover {
+    color: rgb(43, 255, 0);
+    transform: scale(1.5);
+}
+
+.fa-xmark:hover {
+    color: rgb(0, 0, 0);
+    transform: scale(1.5);
+}
+
+.fa-pencil:hover {
+    color: rgb(255, 251, 0);
+    transform: scale(1.5);
+}
+
+.fa-trash:hover {
+    color: rgb(255, 0, 0);
+    transform: scale(1.5);
+}
+
+.dialog-delete {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.dialog-delete button {
+    border: transparent;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    padding: 8px;
+    margin: 10px;
+    width: 25%;
+    cursor: pointer;
+}
+
+.btn-confirm {
+    background-color: rgb(12, 201, 5);
+}
+
+.btn-deny {
+    background-color: rgb(201, 5, 5);
+}
+
+.btn-confirm:hover {
+    transform: scale(1.04);
+}
+
+.btn-deny:hover {
+    transform: scale(1.04);
+}
+
+/*----------Crear Nuevo-----------*/
+
+.form-nuevo-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+label {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+@media (max-width: 600px) {
+    .form-nuevo-item {
+        padding: 15px;
+        width: 90%;
+    }
 }
 
 /*----------Login-----------*/
@@ -160,13 +300,14 @@
     padding: 50px;
 } 
 
-input {
+input, select {
     outline: transparent ;
     border: transparent;
     border-radius: 5px;
     box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.8);
     padding: 5px;
     margin: 10px;
+    width: 100%;
 }
 
 input:hover {

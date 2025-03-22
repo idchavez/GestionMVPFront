@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom';
-import TriggerDarkMode from './TriggerDarkMode';
+import useActiveRoute from 'hooks/useActiveRoute';
 
-const Sidebar = () => {
+const Sidebar = () => { 
 
   return (
     <nav className='sidebar'>
@@ -14,15 +14,22 @@ const Sidebar = () => {
           <Ruta icono='fa fa-list-check' ruta='/admin/actividades' nombre='Actividades'/>
         </div>
         {/*<TriggerDarkMode/>*/}
-        <button className='btn-submit'>Cerrar sesion</button>   
+        <button className='btn-close-sesion'>Cerrar sesion</button>   
     </nav>
   )
 };
 
 const Ruta = ({icono, ruta, nombre }) => {
+
+  const isActive = useActiveRoute(ruta);
+
+  useEffect(() => {
+    console.log(isActive, ruta);
+  }, [isActive, ruta]);
+
   return (
-    <Link to={ruta}>
-      <button>
+    <Link to={ruta} className='ruta-link'>
+      <button className={`${ isActive ? 'ruta-btn-active' : 'ruta-btn'}`}>
         <i className={`${icono}`} />
         {nombre}
       </button>
