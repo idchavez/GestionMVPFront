@@ -12,6 +12,7 @@ import Actividades from "pages/admin/Actividades";
 import Productos from "pages/admin/Productos";
 import { DarkModeContext } from "context/darkMode";
 import { useEffect, useState } from "react";
+import Perfil from "pages/admin/Perfil";
 
 function App() {
 
@@ -32,10 +33,11 @@ function App() {
             </Route>
 
             <Route element={<PrivateLayout/>}>
+              <Route path="/admin/perfil" element={<Perfil/>}/>
               <Route path="/admin/empleados" element={<Empleados/>}/>
               <Route path="/admin/actividades" element={<Actividades/>}/>
               <Route path="/admin/productos" element={<Productos/>}/>
-              <Route path="/admin" element={<Admin/>}/>
+              <Route path="/admin/inicio" element={<Admin/>}/>
             </Route>on
             
             <Route element={<PublicLayout/>}>

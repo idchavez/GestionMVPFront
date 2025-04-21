@@ -4,6 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { nanoid } from 'nanoid';
 import { Dialog, Tooltip } from '@mui/material';
+import { obtenerProductos } from 'utils/api';
 
 const productosBackend = [
   {
@@ -48,23 +49,8 @@ const Productos = () => {
   const [ejecutarConsulta, setEjecutarConsulta] = useState(true);
 
   useEffect(() => {
-    const obtenerProductos = async () => {
-      const options = {
-        method: 'GET',
-        url: 'http://localhost:8080/gestionmvp-app/productos',
-      };
-  
-      await axios
-      .request(options)
-      .then(function (response) {
-        setProductos(response.data);
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
-    }
     if(ejecutarConsulta){
-      obtenerProductos();
+      obtenerProductos(setProductos, setEjecutarConsulta);
       setEjecutarConsulta(false);
     }
   }, [ejecutarConsulta]);
@@ -90,7 +76,7 @@ const Productos = () => {
 
   return (
     <div>
-      <button className='btn-submit'
+      <button className='btn-submit btn-create-new'
         onClick={() => {
           setMostrarTabla(!mostrarTabla)
           }}
@@ -130,12 +116,14 @@ const TablaProductos = ({listaProductos, setEjecutarConsulta}) => {
     //console.log('este es el listado de productos en el componente de la tabla', listaProductos);
   }, [listaProductos]);
 
-  return <div>
+  return <div className='table-container'>
+      <div className='filter-input'>
       <input placeholder='Buscar'
         value={busqueda}
         onChange={(e) => setBusqueda(e.target.value)}/>
+      </div>
       <table className='table-generic'>
-        <caption>Administracion de Productos</caption>
+        <caption className='subtitulo neon-layout'>Administracion de Productos</caption>
           <thead>
             <tr>
               <th>Producto</th>
@@ -157,7 +145,7 @@ const TablaProductos = ({listaProductos, setEjecutarConsulta}) => {
             }
           </tbody>
       </table>
-  </div>;
+  </div>
 };
 
 const FilaProducto = ({producto, setEjecutarConsulta}) => {
@@ -178,9 +166,9 @@ const FilaProducto = ({producto, setEjecutarConsulta}) => {
 
       const options = {
         method: 'PATCH',
-        url: 'http://localhost:8080/gestionmvp-app/productos',
+        url: `http://localhost:5000/productos/${producto.idproducto}/`,
         headers: {'Content-Type':'application/json'},
-        data: {...infoNuevoProducto, id: producto.idproducto}
+        data: {...infoNuevoProducto}
       };
   
       await axios
@@ -200,7 +188,7 @@ const FilaProducto = ({producto, setEjecutarConsulta}) => {
   const eliminarProducto = async() => {
     const options = {
       method: 'DELETE',
-      url: 'http://localhost:8080/gestionmvp-app/productos',
+      url: 'http://localhost:5000/productos/eliminar',
       headers: {'Content-Type':'application/json'},
       data: {id: producto.idproducto}
     };
@@ -224,7 +212,7 @@ const FilaProducto = ({producto, setEjecutarConsulta}) => {
       {edit ? (
         <>
           <td>
-            <input type='text'
+            <input type='text' size={4}
               value={infoNuevoProducto.producto}
               onChange={(e) => setInfoNuevoProducto({...infoNuevoProducto, producto: e.target.value})}/>
           </td>
@@ -321,9 +309,15 @@ const FormularioCreacionProductos = ({
 
     const options = {
       method: 'POST',
-      url: '',
-      headers: {'Content Type': 'application/json'},
-      data: {},
+      url: 'http://localhost:5000/productos/nuevo',
+      headers: {'Content-Type': 'application/json'},
+      data: { producto: nuevoProducto.producto,
+              stock: nuevoProducto.stock,
+              precio: nuevoProducto.precio,
+              descripcion: nuevoProducto.descripcion,
+              estado: nuevoProducto.estado,
+              proveedor: nuevoProducto.proveedor,
+            },
     };
 
     await axios
@@ -343,8 +337,8 @@ const FormularioCreacionProductos = ({
 
   return (
     <div>
-      <h2>Crear Nuevo Producto</h2>
-      <form ref={form} onSubmit={submitForm} className='form-nuevo-item'>
+      <h2 className='subtitulo neon-layout'>Crear Nuevo Producto</h2>
+      <form ref={form} onSubmit={submitForm} className='form-create'>
         <label htmlFor='producto'>
           Nombre del Producto
           <input name='producto' type='text' required/>
