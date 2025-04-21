@@ -6,18 +6,10 @@ const Registro = () => {
     <div className='login'>
       <h2>Crea tu cuenta</h2>
             <form>
-              <div className='inputs-registro'>
-                <label htmlFor=''>
+              <div className='inputs-login'>
+                <label htmlFor='nombre'>
                   Nombre
-                  <input type='text' name=''/>
-                </label>
-                <label htmlFor=''>
-                  Apellido
-                  <input type='text' name=''/>
-                </label>
-                <label htmlFor='telefono'>
-                  Telefono
-                  <input type='text' name='telefono'/>
+                  <input type='text' name='nombre'/>
                 </label>
                 <label htmlFor='nacimiento'>
                   Fecha Nacimiento
@@ -25,11 +17,11 @@ const Registro = () => {
                 </label>
                 <label htmlFor='email'>
                   Correo
-                  <input type='email' placeholder='abcd@mail.com' required/>
+                  <input type='email' name='email' placeholder='abcd@mail.com' required/>
                 </label>
                 <label htmlFor='password'>
                   Contraseña
-                  <input type='password' required/>
+                  <input type='password' name='password' required/>
                 </label>
               </div>
               <div className='login-access'>
