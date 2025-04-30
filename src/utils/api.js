@@ -1,20 +1,65 @@
 import axios from "axios";
 
-export const obtenerProductos = async (setProductos, setEjecutarConsulta) => {
+const getToken = () => {
+    return `Bearer ${localStorage.getItem('token')}`;
+}
+
+export const obtenerProductos = async (successCallback, errorCallback) => {
     const options = {
     method: 'GET',
-    url: 'http://localhost:5000/productos',
+    url: 'http://localhost:5000/productos/',
+    headers: {
+        Authorization: getToken(),
+    },
     };
 
     await axios
     .request(options)
-    .then(function (response) {
-    setProductos(response.data);
-    })
-    .catch(function (error) {
-    console.error(error);
-    });
-    setEjecutarConsulta(false);
+    .then(successCallback)
+    .catch(errorCallback);
+    
+};
+
+export const crearProducto = async (data, successCallback, errorCallback) => {
+
+    const options = {
+        method: 'POST',
+        url: 'http://localhost:5000/productos/nuevo',
+        headers: {'Content-Type': 'application/json'},
+        data,
+    };
+
+    await axios
+    .request(options)
+    .then(successCallback)
+    .catch(errorCallback);
+};
+
+export const editarProducto = async (id, data, successCallback, errorCallback) => {
+    const options = {
+        method: 'PATCH',
+        url: `http://localhost:5000/productos/${id}/`,
+        headers: {'Content-Type':'application/json'},
+        data,
+    };
+
+    await axios
+    .request(options)
+    .then(successCallback)
+    .catch(errorCallback);
+};
+
+export const eliminarProducto = async (id, successCallback, errorCallback) => {
+    const options = {
+        method: 'DELETE',
+        url: 'http://localhost:5000/productos/eliminar',
+        headers: {'Content-Type':'application/json'},
+      };
+    
+    await axios
+    .request(options)
+    .then(successCallback)
+    .catch(errorCallback);
 };
 
 //Añadir demas funciones de axios

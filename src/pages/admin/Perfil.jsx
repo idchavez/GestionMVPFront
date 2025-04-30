@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import picprofile from 'media/yearmix.jpg'
-import { Tooltip } from '@mui/material';
 
 const Perfil = () => {
 
