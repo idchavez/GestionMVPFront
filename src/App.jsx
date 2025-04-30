@@ -1,4 +1,4 @@
-import Admin from "pages/admin/Index";
+import Admin from "pages/admin/Admin";
 import Login from "pages/Login";
 import Registro from "pages/Registro";
 import Index from "pages/Index";
@@ -13,6 +13,7 @@ import Productos from "pages/admin/Productos";
 import { DarkModeContext } from "context/darkMode";
 import { useEffect, useState } from "react";
 import Perfil from "pages/admin/Perfil";
+import { Auth0Provider } from "@auth0/auth0-react";
 
 function App() {
 
@@ -23,7 +24,13 @@ function App() {
   }, [darkMode]);
 
   return (
-    <div>
+    <Auth0Provider
+      domain="gestion-mvp.us.auth0.com"
+      clientId="hnhja9fFZSeR8NxYYgaCG4ZnP6YL9S8E"
+      redirectUri='http://localhost:3000/admin'
+      audience='api-autenticacion-gestion-mvp'
+      >
+      <div>
       <DarkModeContext.Provider value={{darkMode, setDarkMode}}>
         <BrowserRouter>
           <Routes>
@@ -37,7 +44,7 @@ function App() {
               <Route path="/admin/empleados" element={<Empleados/>}/>
               <Route path="/admin/actividades" element={<Actividades/>}/>
               <Route path="/admin/productos" element={<Productos/>}/>
-              <Route path="/admin/inicio" element={<Admin/>}/>
+              <Route path="/admin" element={<Admin/>}/>
             </Route>on
             
             <Route element={<PublicLayout/>}>
@@ -46,7 +53,8 @@ function App() {
           </Routes>
         </BrowserRouter>
       </DarkModeContext.Provider>
-    </div>
+      </div>
+    </Auth0Provider>
   );
 }
 

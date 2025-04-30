@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
 import { nanoid } from 'nanoid';
 import { Dialog, Tooltip } from '@mui/material';
-import { obtenerProductos } from 'utils/api';
+import { obtenerProductos, crearProducto, editarProducto , eliminarProducto } from 'utils/api';
+import ReactLoading from 'react-loading';
 
 const productosBackend = [
   {
@@ -47,11 +47,26 @@ const Productos = () => {
   const [productos, setProductos] = useState([]);
   const [textoBoton, setTextoBoton] = useState("Crear Producto");
   const [ejecutarConsulta, setEjecutarConsulta] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const fetchProductos = async () => {
+      setLoading(true);
+      await obtenerProductos(
+        (response)=>{
+          setProductos(response.data);
+          setEjecutarConsulta(false);
+          setLoading(false);
+        },
+        (error)=>{
+          console.error('Error', error);
+        }
+      );
+    };
+
     if(ejecutarConsulta){
-      obtenerProductos(setProductos, setEjecutarConsulta);
-      setEjecutarConsulta(false);
+      fetchProductos();
+      //setEjecutarConsulta(false);
     }
   }, [ejecutarConsulta]);
 
@@ -84,7 +99,10 @@ const Productos = () => {
         {textoBoton}
       </button>
       {mostrarTabla ? (
-        <TablaProductos listaProductos={productos} setEjecutarConsulta={setEjecutarConsulta}/>
+        <TablaProductos 
+          loading={loading}
+          listaProductos={productos}
+          setEjecutarConsulta={setEjecutarConsulta}/>
       ) : (
         <FormularioCreacionProductos
           setMostrarTabla={setMostrarTabla}
@@ -96,14 +114,19 @@ const Productos = () => {
   )
 };
 
-const TablaProductos = ({listaProductos, setEjecutarConsulta}) => {
+const TablaProductos = ({loading, listaProductos, setEjecutarConsulta}) => {
 
   const [busqueda, setBusqueda] = useState('');
   const [productosFiltrados, setProductosFiltrados] = useState(listaProductos);
 
   useEffect(() => {
+    
+    //si es un valor falsy, salir del useEffect
+    if(!listaProductos) return;
+    
     console.log('busqueda', busqueda);
     console.log('lista original', listaProductos);
+    
     setProductosFiltrados(
       listaProductos.filter((elemento) => {
         console.log('elemento', elemento);
@@ -118,33 +141,37 @@ const TablaProductos = ({listaProductos, setEjecutarConsulta}) => {
 
   return <div className='table-container'>
       <div className='filter-input'>
-      <input placeholder='Buscar'
-        value={busqueda}
-        onChange={(e) => setBusqueda(e.target.value)}/>
+        <input placeholder='Buscar'
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}/>
       </div>
-      <table className='table-generic'>
-        <caption className='subtitulo neon-layout'>Administracion de Productos</caption>
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Stock</th>
-              <th>Precio</th>
-              <th>Descripcion</th>
-              <th>Estado</th>
-              <th>Proveedor</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {productosFiltrados.map((producto) => {
-              return (
-                <FilaProducto producto={producto} key={nanoid()} setEjecutarConsulta={setEjecutarConsulta}/>
-              )
-            })
+      {loading ? (
+        <ReactLoading type='cylon' color='#abc444' height={500} width={350} />
+      ) : (
+        <table className='table-generic'>
+          <caption className='subtitulo neon-layout'>Administracion de Productos</caption>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Stock</th>
+                <th>Precio</th>
+                <th>Descripcion</th>
+                <th>Estado</th>
+                <th>Proveedor</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {productosFiltrados.map((producto) => {
+                return (
+                  <FilaProducto producto={producto} key={nanoid()} setEjecutarConsulta={setEjecutarConsulta}/>
+                )
+              })
 
-            }
-          </tbody>
-      </table>
+              }
+            </tbody>
+        </table>
+      )}
   </div>
 };
 
@@ -162,48 +189,41 @@ const FilaProducto = ({producto, setEjecutarConsulta}) => {
   });
 
   const actualizarProducto = async() => {
-    console.log(infoNuevoProducto);
-
-      const options = {
-        method: 'PATCH',
-        url: `http://localhost:5000/productos/${producto.idproducto}/`,
-        headers: {'Content-Type':'application/json'},
-        data: {...infoNuevoProducto}
-      };
-  
-      await axios
-      .request(options)
-      .then(function (response) {
+    
+    await editarProducto(
+      producto._id,
+      //hacer delete id o
+      // {producto: infoNuevoProducto.producto,
+      //  stock: infoNuevoProducto.stock,}
+      infoNuevoProducto,
+      
+      (response) => {
         console.log(response.data);
         toast.success("Producto modificado!");
         setEdit(false);
         setEjecutarConsulta(true);
-      })
-      .catch(function (error) {
+      },
+      (error) => {
         console.error(error);
-        toast.error("Error en la modificacion!")
-      });
+        toast.error("Error en la modificacion!");
+      } 
+    );
   };
 
-  const eliminarProducto = async() => {
-    const options = {
-      method: 'DELETE',
-      url: 'http://localhost:5000/productos/eliminar',
-      headers: {'Content-Type':'application/json'},
-      data: {id: producto.idproducto}
-    };
+  const borrarProducto = async() => {
 
-    await axios
-    .request(options)
-    .then(function (response) {
-      console.log(response.data);
-      toast.success("Producto eliminado!");
-      setEjecutarConsulta(true);
-    })
-    .catch(function (error) {
-      console.error(error);
-      toast.error("Error en la eliminacion!")
-    });    
+    await eliminarProducto(
+      producto._id,
+      (response) => {
+        console.log(response.data);
+        toast.success("Producto eliminado!");
+        setEjecutarConsulta(true);
+      },
+      (error) => {
+        console.error(error);
+        toast.error("Error en la eliminacion!");
+      }    
+    );
     setOpenDialog(false);
   }  
 
@@ -281,7 +301,7 @@ const FilaProducto = ({producto, setEjecutarConsulta}) => {
         <Dialog open={openDialog}>
             <div className='dialog-delete'>
               <h2>¿Esta seguro de eliminar el registro?</h2>
-              <button onClick={() => eliminarProducto()} className='btn-confirm'>Si</button>
+              <button onClick={() => borrarProducto()} className='btn-confirm'>Si</button>
               <button onClick={() => setOpenDialog(false)} className='btn-deny'>No</button>
             </div>
         </Dialog>
@@ -307,6 +327,25 @@ const FormularioCreacionProductos = ({
       nuevoProducto[key] = value;
     });
 
+    crearProducto(
+      { producto: nuevoProducto.producto,
+        stock: nuevoProducto.stock,
+        precio: nuevoProducto.precio,
+        descripcion: nuevoProducto.descripcion,
+        estado: nuevoProducto.estado,
+        proveedor: nuevoProducto.proveedor,
+      },
+      (response) => {
+        console.log(response.data);
+        toast.success("Producto creado con exito!");
+      },
+      (error) => {
+        console.error('Error: ',error);
+        toast.error("Error creando producto");
+      }
+    );
+
+    /*
     const options = {
       method: 'POST',
       url: 'http://localhost:5000/productos/nuevo',
@@ -330,6 +369,7 @@ const FormularioCreacionProductos = ({
       console.error(error);
       toast.error("Error creando producto");
     })
+    */
     
     setMostrarTabla(true);
     setProductos([...listaProductos, nuevoProducto]);
@@ -358,8 +398,8 @@ const FormularioCreacionProductos = ({
         </label>
         <label htmlFor='estado'>
           Estado
-          <select name='estado' required defaultValue={0}>
-            <option disabled value={0}>Seleccione una opcion</option>
+          <select name='estado' required defaultValue=''>
+            <option disabled value=''>Seleccione una opcion</option>
             <option>En stock</option>
             <option>Agotado</option>
             <option>Baja disponibilidad</option>

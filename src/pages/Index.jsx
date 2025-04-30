@@ -1,16 +1,21 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import React from 'react'
-import { Link } from 'react-router-dom';
 
-const index = () => {
+const Index = () => {
+
+  const { loginWithRedirect } = useAuth0();
+
   return (
       <div className='landing-button'>
-      <button className='btn-login-landing'>
-      <Link className='link-login neon-layout' to="/login">
+      <button className='btn-login-landing link-login neon-layout'
+        onClick={() => loginWithRedirect()}>
+      Login
+      {/*<Link className='link-login neon-layout' to="/login">
         Login
-      </Link>
+      </Link> */}
       </button>
       </div>
   )
 };
 
-export default index;
+export default Index;
