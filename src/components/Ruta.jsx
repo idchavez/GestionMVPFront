@@ -7,7 +7,7 @@ const Ruta = ({icono, ruta, nombre }) => {
   const isActive = useActiveRoute(ruta);
 
   useEffect(() => {
-    console.log(isActive, ruta);
+    //console.log(isActive, ruta);
   }, [isActive, ruta]);
 
   return (

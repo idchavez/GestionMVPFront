@@ -5,6 +5,7 @@ import { nanoid } from 'nanoid';
 import { Dialog, Tooltip } from '@mui/material';
 import { obtenerProductos, crearProducto, editarProducto , eliminarProducto } from 'utils/api';
 import ReactLoading from 'react-loading';
+import PrivateComponent from 'components/PrivateComponent';
 
 const productosBackend = [
   {
@@ -124,12 +125,12 @@ const TablaProductos = ({loading, listaProductos, setEjecutarConsulta}) => {
     //si es un valor falsy, salir del useEffect
     if(!listaProductos) return;
     
-    console.log('busqueda', busqueda);
-    console.log('lista original', listaProductos);
+    //console.log('busqueda', busqueda);
+    //console.log('lista original', listaProductos);
     
     setProductosFiltrados(
       listaProductos.filter((elemento) => {
-        console.log('elemento', elemento);
+        //console.log('elemento', elemento);
         return JSON.stringify(elemento).toLowerCase().includes(busqueda.toLowerCase());
       })
     );
@@ -158,7 +159,9 @@ const TablaProductos = ({loading, listaProductos, setEjecutarConsulta}) => {
                 <th>Descripcion</th>
                 <th>Estado</th>
                 <th>Proveedor</th>
-                <th>Acciones</th>
+                <PrivateComponent roleList={['admin']}>
+                  <th>Acciones</th>
+                </PrivateComponent>
               </tr>
             </thead>
             <tbody>
@@ -272,40 +275,42 @@ const FilaProducto = ({producto, setEjecutarConsulta}) => {
           <td>{producto.proveedor}</td>
         </>
       )}
-      <td>
-        <div className='acciones'>
-          {edit ? (
-            <>
-              <Tooltip title='Guardar' arrow>
-                <i onClick={() => actualizarProducto()}
-                  className='fa fa-check'/>
-              </Tooltip>
-              <Tooltip title='Cerrar' arrow>
-              <i onClick={() => setEdit(!edit)}
-                className='fa fa-xmark'/>
-              </Tooltip>
-            </>
-          ) : (
-            <>
-              <Tooltip title='Editar Producto' arrow>
+      <PrivateComponent roleList={['admin']}>
+        <td>
+          <div className='acciones'>
+            {edit ? (
+              <>
+                <Tooltip title='Guardar' arrow>
+                  <i onClick={() => actualizarProducto()}
+                    className='fa fa-check'/>
+                </Tooltip>
+                <Tooltip title='Cerrar' arrow>
                 <i onClick={() => setEdit(!edit)}
-                  className='fa fa-pencil'/>
-              </Tooltip>
-              <Tooltip title='Eliminar Producto' arrow>
-                <i onClick={() => setOpenDialog(true)}
-                  className='fa fa-trash'/>
-              </Tooltip>
-            </>
-          )}
-        </div>
-        <Dialog open={openDialog}>
-            <div className='dialog-delete'>
-              <h2>¿Esta seguro de eliminar el registro?</h2>
-              <button onClick={() => borrarProducto()} className='btn-confirm'>Si</button>
-              <button onClick={() => setOpenDialog(false)} className='btn-deny'>No</button>
-            </div>
-        </Dialog>
-      </td>
+                  className='fa fa-xmark'/>
+                </Tooltip>
+              </>
+            ) : (
+              <>
+                <Tooltip title='Editar Producto' arrow>
+                  <i onClick={() => setEdit(!edit)}
+                    className='fa fa-pencil'/>
+                </Tooltip>
+                <Tooltip title='Eliminar Producto' arrow>
+                  <i onClick={() => setOpenDialog(true)}
+                    className='fa fa-trash'/>
+                </Tooltip>
+              </>
+            )}
+          </div>
+          <Dialog open={openDialog}>
+              <div className='dialog-delete'>
+                <h2>¿Esta seguro de eliminar el registro?</h2>
+                <button onClick={() => borrarProducto()} className='btn-confirm'>Si</button>
+                <button onClick={() => setOpenDialog(false)} className='btn-deny'>No</button>
+              </div>
+          </Dialog>
+        </td>
+      </PrivateComponent>
     </tr>
   );
 };

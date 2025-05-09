@@ -10,7 +10,7 @@ const Perfil = () => {
       {cargarpic ? (
           <img onClick={() => {
             setCargarPic(!cargarpic)}} 
-            class="img-perfil" src={picprofile} alt="FotoPerfil" />
+            className="img-perfil" src={picprofile} alt="FotoPerfil" />
         ) : (
           <input className='img-perfil' type='file' accept='image/*'/>
         )

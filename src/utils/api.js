@@ -10,7 +10,7 @@ export const obtenerProductos = async (successCallback, errorCallback) => {
     url: 'http://localhost:5000/productos/',
     headers: {
         Authorization: getToken(),
-    },
+    }
     };
 
     await axios
@@ -79,4 +79,52 @@ export const obtenerEmpleados = async (setEmpleados, setEjecutarConsulta) => {
     console.error(error);
     });
     setEjecutarConsulta(false);
+};
+
+
+
+// CRUD USUARIOS
+
+export const obtenerUsuarios = async (successCallback, errorCallback) => {
+    const options = {
+    method: 'GET',
+    url: 'http://localhost:5000/usuarios',
+    headers: {
+        Authorization: getToken(),
+    }
+    };
+
+    await axios
+    .request(options)
+    .then(successCallback)
+    .catch(errorCallback);
+};
+
+export const obtenerDatosUsuario = async (successCallback, errorCallback) => {
+    const options = {
+    method: 'GET',
+    url: 'http://localhost:5000/usuarios/self',
+    headers: {
+        Authorization: getToken(), //3. enviar token a express
+    }
+    };
+
+    await axios
+    .request(options)
+    .then(successCallback)
+    .catch(errorCallback);
+};
+
+export const editarUsuario = async (id, data, successCallback, errorCallback) => {
+    const options = {
+        method: 'PATCH',
+        url: `http://localhost:5000/usuarios/${id}/`,
+        headers: {'Content-Type':'application/json', Authorization: getToken()},
+        data,
+    };
+
+    await axios
+    .request(options)
+    .then(successCallback)
+    .catch(errorCallback);
 };

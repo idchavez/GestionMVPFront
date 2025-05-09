@@ -1,31 +1,19 @@
-import React, { useEffect } from 'react'
-import { useAuth0 } from "@auth0/auth0-react";
+import { useUser } from 'context/userContext';
+import React from 'react'
 import ReactLoading from 'react-loading';
 
-const PrivateRoute = ({children}) => {
-    const { isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
-    
-    useEffect(() => {
-        const fetchAuth0Token = async () => {
-            const accessToken = await getAccessTokenSilently({
-                audience: 'api-autenticacion-gestion-mvp'
-            });
-            localStorage.setItem('token', accessToken);
-        };
-        if (isAuthenticated) {
-            fetchAuth0Token();
-        }
-    }, [isAuthenticated, getAccessTokenSilently]);
+const PrivateRoute = ({roleList, children}) => {
 
-    if(isLoading) 
-        return 
-        <ReactLoading type='cylon' color='#abc444' height={667} width={375} />;
+    const {userData} = useUser();
+
+    console.log('rol: ',userData.rol);
+    console.log('rolelist: ', roleList);
+
+    if (roleList.includes(userData.rol)) {
+        return children;
+    }
     
-    return isAuthenticated ? (
-        <>{children}</>
-    ) : (
-        <div>No estas autorizado para ver este sitio.</div>
-    );
-}
+    return <div>No estas autorizado para ver este sitio.</div>;
+};
 
 export default PrivateRoute;
