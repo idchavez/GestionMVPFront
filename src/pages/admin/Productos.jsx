@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
 import { nanoid } from 'nanoid';
 import { Dialog, Tooltip } from '@mui/material';
+import { obtenerProductos, crearProducto, editarProducto , eliminarProducto } from 'utils/api';
+import ReactLoading from 'react-loading';
+import PrivateComponent from 'components/PrivateComponent';
 
 const productosBackend = [
   {
@@ -46,26 +48,26 @@ const Productos = () => {
   const [productos, setProductos] = useState([]);
   const [textoBoton, setTextoBoton] = useState("Crear Producto");
   const [ejecutarConsulta, setEjecutarConsulta] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const obtenerProductos = async () => {
-      const options = {
-        method: 'GET',
-        url: 'http://localhost:8080/gestionmvp-app/productos',
-      };
-  
-      await axios
-      .request(options)
-      .then(function (response) {
-        setProductos(response.data);
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
-    }
+    const fetchProductos = async () => {
+      setLoading(true);
+      await obtenerProductos(
+        (response)=>{
+          setProductos(response.data);
+          setEjecutarConsulta(false);
+          setLoading(false);
+        },
+        (error)=>{
+          console.error('Error', error);
+        }
+      );
+    };
+
     if(ejecutarConsulta){
-      obtenerProductos();
-      setEjecutarConsulta(false);
+      fetchProductos();
+      //setEjecutarConsulta(false);
     }
   }, [ejecutarConsulta]);
 
@@ -90,7 +92,7 @@ const Productos = () => {
 
   return (
     <div>
-      <button className='btn-submit'
+      <button className='btn-submit btn-create-new'
         onClick={() => {
           setMostrarTabla(!mostrarTabla)
           }}
@@ -98,7 +100,10 @@ const Productos = () => {
         {textoBoton}
       </button>
       {mostrarTabla ? (
-        <TablaProductos listaProductos={productos} setEjecutarConsulta={setEjecutarConsulta}/>
+        <TablaProductos 
+          loading={loading}
+          listaProductos={productos}
+          setEjecutarConsulta={setEjecutarConsulta}/>
       ) : (
         <FormularioCreacionProductos
           setMostrarTabla={setMostrarTabla}
@@ -110,17 +115,22 @@ const Productos = () => {
   )
 };
 
-const TablaProductos = ({listaProductos, setEjecutarConsulta}) => {
+const TablaProductos = ({loading, listaProductos, setEjecutarConsulta}) => {
 
   const [busqueda, setBusqueda] = useState('');
   const [productosFiltrados, setProductosFiltrados] = useState(listaProductos);
 
   useEffect(() => {
-    console.log('busqueda', busqueda);
-    console.log('lista original', listaProductos);
+    
+    //si es un valor falsy, salir del useEffect
+    if(!listaProductos) return;
+    
+    //console.log('busqueda', busqueda);
+    //console.log('lista original', listaProductos);
+    
     setProductosFiltrados(
       listaProductos.filter((elemento) => {
-        console.log('elemento', elemento);
+        //console.log('elemento', elemento);
         return JSON.stringify(elemento).toLowerCase().includes(busqueda.toLowerCase());
       })
     );
@@ -130,34 +140,42 @@ const TablaProductos = ({listaProductos, setEjecutarConsulta}) => {
     //console.log('este es el listado de productos en el componente de la tabla', listaProductos);
   }, [listaProductos]);
 
-  return <div>
-      <input placeholder='Buscar'
-        value={busqueda}
-        onChange={(e) => setBusqueda(e.target.value)}/>
-      <table className='table-generic'>
-        <caption>Administracion de Productos</caption>
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Stock</th>
-              <th>Precio</th>
-              <th>Descripcion</th>
-              <th>Estado</th>
-              <th>Proveedor</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {productosFiltrados.map((producto) => {
-              return (
-                <FilaProducto producto={producto} key={nanoid()} setEjecutarConsulta={setEjecutarConsulta}/>
-              )
-            })
+  return <div className='table-container'>
+      <div className='filter-input'>
+        <input placeholder='Buscar'
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}/>
+      </div>
+      {loading ? (
+        <ReactLoading type='cylon' color='#abc444' height={500} width={350} />
+      ) : (
+        <table className='table-generic'>
+          <caption className='subtitulo neon-layout'>Administracion de Productos</caption>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Stock</th>
+                <th>Precio</th>
+                <th>Descripcion</th>
+                <th>Estado</th>
+                <th>Proveedor</th>
+                <PrivateComponent roleList={['admin']}>
+                  <th>Acciones</th>
+                </PrivateComponent>
+              </tr>
+            </thead>
+            <tbody>
+              {productosFiltrados.map((producto) => {
+                return (
+                  <FilaProducto producto={producto} key={nanoid()} setEjecutarConsulta={setEjecutarConsulta}/>
+                )
+              })
 
-            }
-          </tbody>
-      </table>
-  </div>;
+              }
+            </tbody>
+        </table>
+      )}
+  </div>
 };
 
 const FilaProducto = ({producto, setEjecutarConsulta}) => {
@@ -174,48 +192,41 @@ const FilaProducto = ({producto, setEjecutarConsulta}) => {
   });
 
   const actualizarProducto = async() => {
-    console.log(infoNuevoProducto);
-
-      const options = {
-        method: 'PATCH',
-        url: 'http://localhost:8080/gestionmvp-app/productos',
-        headers: {'Content-Type':'application/json'},
-        data: {...infoNuevoProducto, id: producto.idproducto}
-      };
-  
-      await axios
-      .request(options)
-      .then(function (response) {
+    
+    await editarProducto(
+      producto._id,
+      //hacer delete id o
+      // {producto: infoNuevoProducto.producto,
+      //  stock: infoNuevoProducto.stock,}
+      infoNuevoProducto,
+      
+      (response) => {
         console.log(response.data);
         toast.success("Producto modificado!");
         setEdit(false);
         setEjecutarConsulta(true);
-      })
-      .catch(function (error) {
+      },
+      (error) => {
         console.error(error);
-        toast.error("Error en la modificacion!")
-      });
+        toast.error("Error en la modificacion!");
+      } 
+    );
   };
 
-  const eliminarProducto = async() => {
-    const options = {
-      method: 'DELETE',
-      url: 'http://localhost:8080/gestionmvp-app/productos',
-      headers: {'Content-Type':'application/json'},
-      data: {id: producto.idproducto}
-    };
+  const borrarProducto = async() => {
 
-    await axios
-    .request(options)
-    .then(function (response) {
-      console.log(response.data);
-      toast.success("Producto eliminado!");
-      setEjecutarConsulta(true);
-    })
-    .catch(function (error) {
-      console.error(error);
-      toast.error("Error en la eliminacion!")
-    });    
+    await eliminarProducto(
+      producto._id,
+      (response) => {
+        console.log(response.data);
+        toast.success("Producto eliminado!");
+        setEjecutarConsulta(true);
+      },
+      (error) => {
+        console.error(error);
+        toast.error("Error en la eliminacion!");
+      }    
+    );
     setOpenDialog(false);
   }  
 
@@ -224,7 +235,7 @@ const FilaProducto = ({producto, setEjecutarConsulta}) => {
       {edit ? (
         <>
           <td>
-            <input type='text'
+            <input type='text' size={4}
               value={infoNuevoProducto.producto}
               onChange={(e) => setInfoNuevoProducto({...infoNuevoProducto, producto: e.target.value})}/>
           </td>
@@ -264,40 +275,42 @@ const FilaProducto = ({producto, setEjecutarConsulta}) => {
           <td>{producto.proveedor}</td>
         </>
       )}
-      <td>
-        <div className='acciones'>
-          {edit ? (
-            <>
-              <Tooltip title='Guardar' arrow>
-                <i onClick={() => actualizarProducto()}
-                  className='fa fa-check'/>
-              </Tooltip>
-              <Tooltip title='Cerrar' arrow>
-              <i onClick={() => setEdit(!edit)}
-                className='fa fa-xmark'/>
-              </Tooltip>
-            </>
-          ) : (
-            <>
-              <Tooltip title='Editar Producto' arrow>
+      <PrivateComponent roleList={['admin']}>
+        <td>
+          <div className='acciones'>
+            {edit ? (
+              <>
+                <Tooltip title='Guardar' arrow>
+                  <i onClick={() => actualizarProducto()}
+                    className='fa fa-check'/>
+                </Tooltip>
+                <Tooltip title='Cerrar' arrow>
                 <i onClick={() => setEdit(!edit)}
-                  className='fa fa-pencil'/>
-              </Tooltip>
-              <Tooltip title='Eliminar Producto' arrow>
-                <i onClick={() => setOpenDialog(true)}
-                  className='fa fa-trash'/>
-              </Tooltip>
-            </>
-          )}
-        </div>
-        <Dialog open={openDialog}>
-            <div className='dialog-delete'>
-              <h2>¿Esta seguro de eliminar el registro?</h2>
-              <button onClick={() => eliminarProducto()} className='btn-confirm'>Si</button>
-              <button onClick={() => setOpenDialog(false)} className='btn-deny'>No</button>
-            </div>
-        </Dialog>
-      </td>
+                  className='fa fa-xmark'/>
+                </Tooltip>
+              </>
+            ) : (
+              <>
+                <Tooltip title='Editar Producto' arrow>
+                  <i onClick={() => setEdit(!edit)}
+                    className='fa fa-pencil'/>
+                </Tooltip>
+                <Tooltip title='Eliminar Producto' arrow>
+                  <i onClick={() => setOpenDialog(true)}
+                    className='fa fa-trash'/>
+                </Tooltip>
+              </>
+            )}
+          </div>
+          <Dialog open={openDialog}>
+              <div className='dialog-delete'>
+                <h2>¿Esta seguro de eliminar el registro?</h2>
+                <button onClick={() => borrarProducto()} className='btn-confirm'>Si</button>
+                <button onClick={() => setOpenDialog(false)} className='btn-deny'>No</button>
+              </div>
+          </Dialog>
+        </td>
+      </PrivateComponent>
     </tr>
   );
 };
@@ -319,11 +332,36 @@ const FormularioCreacionProductos = ({
       nuevoProducto[key] = value;
     });
 
+    crearProducto(
+      { producto: nuevoProducto.producto,
+        stock: nuevoProducto.stock,
+        precio: nuevoProducto.precio,
+        descripcion: nuevoProducto.descripcion,
+        estado: nuevoProducto.estado,
+        proveedor: nuevoProducto.proveedor,
+      },
+      (response) => {
+        console.log(response.data);
+        toast.success("Producto creado con exito!");
+      },
+      (error) => {
+        console.error('Error: ',error);
+        toast.error("Error creando producto");
+      }
+    );
+
+    /*
     const options = {
       method: 'POST',
-      url: '',
-      headers: {'Content Type': 'application/json'},
-      data: {},
+      url: 'http://localhost:5000/productos/nuevo',
+      headers: {'Content-Type': 'application/json'},
+      data: { producto: nuevoProducto.producto,
+              stock: nuevoProducto.stock,
+              precio: nuevoProducto.precio,
+              descripcion: nuevoProducto.descripcion,
+              estado: nuevoProducto.estado,
+              proveedor: nuevoProducto.proveedor,
+            },
     };
 
     await axios
@@ -336,6 +374,7 @@ const FormularioCreacionProductos = ({
       console.error(error);
       toast.error("Error creando producto");
     })
+    */
     
     setMostrarTabla(true);
     setProductos([...listaProductos, nuevoProducto]);
@@ -343,8 +382,8 @@ const FormularioCreacionProductos = ({
 
   return (
     <div>
-      <h2>Crear Nuevo Producto</h2>
-      <form ref={form} onSubmit={submitForm} className='form-nuevo-item'>
+      <h2 className='subtitulo neon-layout'>Crear Nuevo Producto</h2>
+      <form ref={form} onSubmit={submitForm} className='form-create'>
         <label htmlFor='producto'>
           Nombre del Producto
           <input name='producto' type='text' required/>
@@ -364,8 +403,8 @@ const FormularioCreacionProductos = ({
         </label>
         <label htmlFor='estado'>
           Estado
-          <select name='estado' required defaultValue={0}>
-            <option disabled value={0}>Seleccione una opcion</option>
+          <select name='estado' required defaultValue=''>
+            <option disabled value=''>Seleccione una opcion</option>
             <option>En stock</option>
             <option>Agotado</option>
             <option>Baja disponibilidad</option>
